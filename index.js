@@ -1,5 +1,6 @@
 import express from "express";
 import nodemailer from "nodemailer";
+import cron from "node-cron"
 import "dotenv/config";
 import { readFiles, updateSheet } from "./googleSheet.js";
 
@@ -13,6 +14,19 @@ const port = process.env.PORT;
 
 app.use(express.json());
 
+const transporter = nodemailer.createTransport({
+  host: "umera.ng",
+  port: 587,
+  secure: false, // true for port 465, false for other ports
+  auth: {
+    user: process.env.USER,
+    pass: process.env.PASS,
+  },
+});
+
+console.log(process.env.USER)
+console.log(process.env.PASS)
+
 app.use("/keepAppAlive", (req,res)=> {
   console.log("Keeping Server Alive")
   res.send('App is Alive')
@@ -25,15 +39,6 @@ app.use("/", (req,res)=> {
     `)
 })
 
-const transporter = nodemailer.createTransport({
-  host: "umera.ng",
-  port: 587,
-  secure: false, // true for port 465, false for other ports
-  auth: {
-    user: process.env.USER,
-    pass: process.env.PASS,
-  },
-});
 
 const sendBirthdayEmail = async (name, email) => {
   const mailOptions = {
@@ -125,7 +130,17 @@ const checkBirthdaysAndSendEmails = async () => {
   }
 };
 
-checkBirthdaysAndSendEmails();
+cron.schedule(
+  "0 9 * * *", async () => {
+    console.log('Email Schedule started to run')
+    await checkBirthdaysAndSendEmails();
+  }
+)
+
+// checkBirthdaysAndSendEmails()
+
+
+
 
 app.listen(port, () => {
   console.log("App is listening on", port);
