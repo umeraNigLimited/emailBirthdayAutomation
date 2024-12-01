@@ -13,6 +13,18 @@ const port = process.env.PORT;
 
 app.use(express.json());
 
+app.use("/keepAppAlive", (req,res)=> {
+  console.log("Keeping Server Alive")
+  res.send('App is Alive')
+})
+
+app.use("/", (req,res)=> {
+  console.log("Keeping Server Alive")
+  res.send(`This is an App for Email Automation Using Googlesheet and Nodemailer by Odunsi Oluwabukola.
+    All the thing wey i write for top na perspe, Make i no lie , Coding Hard die!
+    `)
+})
+
 const transporter = nodemailer.createTransport({
   host: "umera.ng",
   port: 587,
