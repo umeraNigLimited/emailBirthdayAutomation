@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 import cron from "node-cron"
 import "dotenv/config";
 import { readFiles, updateSheet } from "./googleSheet.js";
+import axios from "axios";
 
 const app = express();
 const port = process.env.PORT;
@@ -136,6 +137,18 @@ cron.schedule(
     await checkBirthdaysAndSendEmails();
   }
 )
+
+
+
+  cron.schedule(
+    "*/5 * * * *", async () => {
+      console.log('Keeping App Live Every 5 min')
+        await axios.get('https://emailbirthdayautomation.onrender.com/keepAppAlive')
+        .then((res) => console.log('This ran after 5 mins'))
+        .catch(err => console.log(err))
+    }
+  )
+
 
 // checkBirthdaysAndSendEmails()
 
