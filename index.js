@@ -98,7 +98,7 @@ const checkBirthdaysAndSendEmails = async () => {
   console.log(`Today is: ${day}`);
 
   console.log(today);
-  console.log(data);
+  // console.log(data);
 
   for (let row of data) {
     const name = row[0];
@@ -106,9 +106,9 @@ const checkBirthdaysAndSendEmails = async () => {
     const birthday = row[2];
     const sent = row[3];
 
-    console.log(name);
-    console.log(email);
-    console.log(birthday);
+    // console.log(name);
+    // console.log(email);
+    // console.log(birthday);
     try {
       if (birthday.slice(5, 10) === today && !sent) {
         try {
@@ -143,7 +143,7 @@ const checkBirthdaysAndSendEmails = async () => {
 
 cron.schedule(
   "*/50 11 * * *", async () => {
-    console.log('Email Schedule started to run')
+    console.log(` [CRON] Email Schedule started to run at ${new Date().toISOString()}`)
     await checkBirthdaysAndSendEmails();
   }, { scheduled: true }
 )
