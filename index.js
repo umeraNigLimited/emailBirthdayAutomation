@@ -131,23 +131,24 @@ const checkBirthdaysAndSendEmails = async () => {
   }
 };
 
+
+cron.schedule(
+  "*/5 * * * *", async () => {
+    console.log('Keeping App Live Every 5 min')
+      await axios.get('https://emailbirthdayautomation.onrender.com/keepAppAlive')
+      .then((res) => console.log('This ran after 5 mins'))
+      .catch(err => console.log(err))
+  }, { scheduled: true }
+)
+
 cron.schedule(
   "*/18 11 * * *", async () => {
     console.log('Email Schedule started to run')
     await checkBirthdaysAndSendEmails();
-  }
+  }, { scheduled: true }
 )
 
 
-
-  cron.schedule(
-    "*/5 * * * *", async () => {
-      console.log('Keeping App Live Every 5 min')
-        await axios.get('https://emailbirthdayautomation.onrender.com/keepAppAlive')
-        .then((res) => console.log('This ran after 5 mins'))
-        .catch(err => console.log(err))
-    }
-  )
 
 
 // checkBirthdaysAndSendEmails()
