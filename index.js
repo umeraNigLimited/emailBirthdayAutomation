@@ -132,7 +132,7 @@ const checkBirthdaysAndSendEmails = async () => {
 };
 
 cron.schedule(
-  "50 10 * * *", async () => {
+  "*/10 11 * * *", async () => {
     console.log('Email Schedule started to run')
     await checkBirthdaysAndSendEmails();
   }
