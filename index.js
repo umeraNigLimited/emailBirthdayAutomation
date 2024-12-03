@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 import cron from "node-cron"
 import "dotenv/config";
 import { readFiles, updateSheet } from "./googleSheet.js";
+import moment from "moment-timezone";
 import axios from "axios";
 
 const app = express();
@@ -142,10 +143,11 @@ const checkBirthdaysAndSendEmails = async () => {
 // )
 
 cron.schedule(
-  "30 12 * * *", async () => {
-    console.log(` [CRON] Email Schedule started to run at ${new Date().toISOString()}`)
+  "*/49 13 * * *", async () => {
+    const now = moment().tz("Africa/Lagos"); 
+    console.log(` [CRON] Email Schedule started to run at ${now.format('YYYY-MM-DD HH:mm:ss')}`)
     await checkBirthdaysAndSendEmails();
-  }, { scheduled: true }
+  }, { scheduled: true , timezone: "Africa/Lagos"}
 )
 
 
