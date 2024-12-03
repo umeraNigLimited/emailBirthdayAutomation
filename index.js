@@ -143,7 +143,7 @@ const checkBirthdaysAndSendEmails = async () => {
 // )
 
 cron.schedule(
-  "*/49 13 * * *", async () => {
+  "0 13 * * *", async () => {
     const now = moment().tz("Africa/Lagos"); 
     console.log(` [CRON] Email Schedule started to run at ${now.format('YYYY-MM-DD HH:mm:ss')}`)
     await checkBirthdaysAndSendEmails();
