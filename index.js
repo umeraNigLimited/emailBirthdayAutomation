@@ -139,7 +139,7 @@ cron.schedule(
 )
 
 cron.schedule(
-  "50 13 * * *", async () => {
+  "0 9 * * *", async () => {
     const now = moment().tz("Africa/Lagos"); 
     console.log(` [CRON] Email Schedule started to run at ${now.format('YYYY-MM-DD HH:mm:ss')}`)
     await checkBirthdaysAndSendEmails();
