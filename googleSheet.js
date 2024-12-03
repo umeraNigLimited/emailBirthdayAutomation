@@ -24,6 +24,7 @@ const normalizeDate = (dateStr) => {
       format(cleanedDate, "d-MMM-yyyy", new Date()) ||
       format(cleanedDate, "MMM-yyyy", new Date()) ||
       format(cleanedDate, "d-MMM", new Date()) ||
+      format(cleanedDate, "MMM-d", new Date()) ||
       format(cleanedDate, "d-MMMM-yyyy", new Date()) ||
       format(cleanedDate, "d/M/yyyy", new Date()) ||
       format(cleanedDate, "dd-MM-yyyy", new Date()) ||
