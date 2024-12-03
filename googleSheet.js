@@ -39,7 +39,7 @@ const normalizeDate = (dateStr) => {
 };
 
 export const readFiles = async () => {
-  const spreadsheetId = "103pt_CCclrlizbu-aNOPBsK-BaSel-ClXdCWFc2-Lmw"; // Correct spelling
+  const spreadsheetId = process.env.SPREADSHEET_ID;; 
   //   const range = "BIRTHDAY!D3";
   const rangeName = "BIRTHDAY!M:O";
 
@@ -79,7 +79,7 @@ export const readFiles = async () => {
 
 export const updateSheet = async (name, email, birthday, data, status) => {
   //   const sheets = google.sheets({ version: "v4", auth: oauth2Client });
-  const spreadsheetId = "103pt_CCclrlizbu-aNOPBsK-BaSel-ClXdCWFc2-Lmw";
+  const spreadsheetId = process.env.SPREADSHEET_ID;
   const range = `BIRTHDAY!P${
     data.findIndex((row) => row[0] === name && row[1] === email) + 2
   }`; // Finding the row and updating status
