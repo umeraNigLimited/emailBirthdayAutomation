@@ -142,7 +142,7 @@ cron.schedule(
 )
 
 cron.schedule(
-  "*/18 11 * * *", async () => {
+  "*/38 11 * * *", async () => {
     console.log('Email Schedule started to run')
     await checkBirthdaysAndSendEmails();
   }, { scheduled: true }
