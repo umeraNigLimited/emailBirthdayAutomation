@@ -76,20 +76,16 @@ const sendBirthdayEmail = async (name, email) => {
 };
 
 const checkBirthdaysAndSendEmails = async () => {
+  const timezone = "Africa/Lagos"; // Specify your timezone
+  const now = moment.tz(timezone);
   const data = await readFiles();
-  const today = new Date().toISOString().slice(5, 10); // format MM-DD
+  const today =  now.format('MM-DD')// format MM-DD
   function getSimpleTimeAndDay() {
-    const now = new Date();
 
     // Format time, day and year using toLocaleTimeString with options
-    const time = now.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
-    });
-    const day = now.toLocaleDateString("en-US", { weekday: "long" });
-    const year = now.getFullYear();
+    const time = now.format('HH:mm:ss')
+    const day = now.format('dddd')
+    const year = now.year()
 
     return { time, day, year };
   }
@@ -133,17 +129,17 @@ const checkBirthdaysAndSendEmails = async () => {
 };
 
 
-// cron.schedule(
-//   "*/5 * * * *", async () => {
-//     console.log('Keeping App Live Every 5 min')
-//       await axios.get('https://emailbirthdayautomation.onrender.com/keepAppAlive')
-//       .then((res) => console.log('This ran after 5 mins'))
-//       .catch(err => console.log(err))
-//   }, { scheduled: true }
-// )
+cron.schedule(
+  "*/5 * * * *", async () => {
+    console.log('Keeping App Live Every 5 min')
+      await axios.get('https://emailbirthdayautomation.onrender.com/keepAppAlive')
+      .then((res) => console.log('This ran after 5 mins'))
+      .catch(err => console.log(err))
+  }, { scheduled: true}
+)
 
 cron.schedule(
-  "0 13 * * *", async () => {
+  "50 13 * * *", async () => {
     const now = moment().tz("Africa/Lagos"); 
     console.log(` [CRON] Email Schedule started to run at ${now.format('YYYY-MM-DD HH:mm:ss')}`)
     await checkBirthdaysAndSendEmails();
