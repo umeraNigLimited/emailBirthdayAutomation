@@ -6,7 +6,7 @@ import { readFiles, updateSheet } from "./googleSheet.js";
 import axios from "axios";
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 6900;
 // const html = `
 // <h1>Dear ${name}</h1>
 // <p>We wish you a wonderful birthday filled with joy and happiness! 🎉🎂\n\nBest regards,\nUMeRA Team</p>
