@@ -7,6 +7,7 @@ const SCOPES = "https://www.googleapis.com/auth/spreadsheets";
 // const KEY_FILE_PATH = path.join(__dirname, "path/to/google.json");
 const key_file = process.env.GOOGLE_AUTH;
 
+
 // Load service account credentials
 const auth = new google.auth.GoogleAuth({
   keyFile: key_file,
@@ -15,22 +16,25 @@ const auth = new google.auth.GoogleAuth({
 
 // Create Google Sheets API client
 const sheets = google.sheets({ version: "v4", auth });
-
 const normalizeDate = (dateStr) => {
   try {
     const cleanedDate = dateStr.replace(/(st|nd|rd|th|of|,)/gi, "").trim(); // Remove ordinals and unnecessary characters
+    // console.log(cleanedDate)
 
     const parsedDate =
       format(cleanedDate, "d-MMM-yyyy", new Date()) ||
       format(cleanedDate, "MMM-yyyy", new Date()) ||
       format(cleanedDate, "d-MMM", new Date()) ||
       format(cleanedDate, "MMM-d", new Date()) ||
+      format(cleanedDate, "dd-MM-yyyy", new Date()) ||
       format(cleanedDate, "d-MMMM-yyyy", new Date()) ||
       format(cleanedDate, "d/M/yyyy", new Date()) ||
       format(cleanedDate, "dd-MM-yyyy", new Date()) ||
       format(cleanedDate, "dd/MM/yyyy", new Date()) ||
+      format(cleanedDate, "M/dd/yyyy", new Date()) ||
       format(cleanedDate, "MMM-yy", new Date());
 
+    // console.log(parsedDate);
     return format(parsedDate, "yyyy-MM-dd");
   } catch (err) {
     console.log(`Error parsing ${dateStr}: ${err.message}`);
@@ -53,7 +57,7 @@ export const readFiles = async () => {
     const filteredData = response.slice(1);
     // console.log(response);
     // console.log(filteredData);
-    console.log(response.length);
+    // console.log(response.length);
 
     // Handle case where there is no data
     if (!response || response.length === 0) {
@@ -65,6 +69,7 @@ export const readFiles = async () => {
     const normalizedData = filteredData.map((row) => {
       row[2] = normalizeDate(row[2]); // Assuming birthday is in 3rd column
       // console.log("this is ", row);
+      // console.log(row[2], row[0])
       return row;
     });
 

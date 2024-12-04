@@ -5,14 +5,10 @@ import "dotenv/config";
 import { readFiles, updateSheet } from "./googleSheet.js";
 import moment from "moment-timezone";
 import axios from "axios";
+import { sendWhatsAppNotification } from "./whatsAppNotification.js";
 
 const app = express();
 const port = process.env.PORT || 6900;
-// const html = `
-// <h1>Dear ${name}</h1>
-// <p>We wish you a wonderful birthday filled with joy and happiness! 🎉🎂\n\nBest regards,\nUMeRA Team</p>
-// <img src='cid:unique@umera.ng' width='100%'/>
-// `;
 
 app.use(express.json());
 
@@ -26,12 +22,18 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-console.log(process.env.USER)
-console.log(process.env.PASS)
+// console.log(process.env.USER)
+// console.log(process.env.PASS)
 
 app.use("/keepAppAlive", (req,res)=> {
   console.log("Keeping Server Alive")
   res.send('App is Alive')
+})
+
+app.use("/getSMSRes", (req,res)=> {
+  console.log("Keeping Server Alive")
+  res.send(`Thank You`)
+  console.log(req.body)
 })
 
 app.use("/", (req,res)=> {
@@ -41,6 +43,19 @@ app.use("/", (req,res)=> {
     `)
 })
 
+
+const timezone = "Africa/Lagos"; // Specify your timezone
+const now = moment.tz(timezone);
+const today =  now.format('MM-DD')// format MM-DD
+function getSimpleTimeAndDay() {
+
+  // Format time, day and year using toLocaleTimeString with options
+  const time = now.format('HH:mm:ss')
+  const day = now.format('dddd')
+  const year = now.year()
+
+  return { time, day, year };
+}
 
 const sendBirthdayEmail = async (name, email) => {
   const mailOptions = {
@@ -69,6 +84,10 @@ const sendBirthdayEmail = async (name, email) => {
 
   try {
     await transporter.sendMail(mailOptions);
+    const { time, day, year } = getSimpleTimeAndDay();
+    let message = `Hello Olamide😇, 
+    The Birthday Wish was sent to ${name} at ${time} on ${day}, ${year} bythe Email Automation Created by Odunsi Oluwabukola(LappiConnect)™️`
+    sendWhatsAppNotification(message)
     console.log(`Birthday email sent to: ${email}`);
   } catch (err) {
     console.error("Error sending email: ", err);
@@ -76,20 +95,7 @@ const sendBirthdayEmail = async (name, email) => {
 };
 
 const checkBirthdaysAndSendEmails = async () => {
-  const timezone = "Africa/Lagos"; // Specify your timezone
-  const now = moment.tz(timezone);
   const data = await readFiles();
-  const today =  now.format('MM-DD')// format MM-DD
-  function getSimpleTimeAndDay() {
-
-    // Format time, day and year using toLocaleTimeString with options
-    const time = now.format('HH:mm:ss')
-    const day = now.format('dddd')
-    const year = now.year()
-
-    return { time, day, year };
-  }
-
   const { time, day, year } = getSimpleTimeAndDay();
   console.log(`Current time: ${time}`);
   console.log(`Today is: ${day}`);
@@ -146,11 +152,11 @@ cron.schedule(
   }, { scheduled: true , timezone: "Africa/Lagos"}
 )
 
+// const { time, day, year } = getSimpleTimeAndDay();
+// const message = `Hello Olamide 😇, The Birthday Wish was sent at ${time} on ${day}, ${year} by the Email Automation Created by Odunsi Oluwabukola`
 
-
-
+// sendWhatsAppNotification(message)
 // checkBirthdaysAndSendEmails()
-
 
 
 
