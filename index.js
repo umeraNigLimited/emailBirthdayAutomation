@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // true for port 465, false for other ports
   auth: {
-    user: process.env.USER,
+    user: 'communications@umera.ng',
     pass: process.env.PASS,
   },
 });
@@ -44,22 +44,11 @@ app.use("/", (req,res)=> {
 })
 
 
-const timezone = "Africa/Lagos"; // Specify your timezone
-const now = moment.tz(timezone);
-const today =  now.format('MM-DD')// format MM-DD
-function getSimpleTimeAndDay() {
 
-  // Format time, day and year using toLocaleTimeString with options
-  const time = now.format('HH:mm:ss')
-  const day = now.format('dddd')
-  const year = now.year()
-
-  return { time, day, year };
-}
 
 const sendBirthdayEmail = async (name, email) => {
   const mailOptions = {
-    from: process.env.USER,
+    from: 'communications@umera.ng',
     to: email,
     subject: `Happy Birthday, ${name}!`,
     html: `
@@ -84,6 +73,18 @@ const sendBirthdayEmail = async (name, email) => {
 
   try {
     await transporter.sendMail(mailOptions);
+    const timezone = "Africa/Lagos"; // Specify your timezone
+const now = moment.tz(timezone);
+const today =  now.format('MM-DD')// format MM-DD
+function getSimpleTimeAndDay() {
+
+  // Format time, day and year using toLocaleTimeString with options
+  const time = now.format('HH:mm:ss')
+  const day = now.format('dddd')
+  const year = now.year()
+
+  return { time, day, year };
+}
     const { time, day, year } = getSimpleTimeAndDay();
     let message = `Hello Olamide😇, 
     The Birthday Wish was sent to ${name} at ${time} on ${day}, ${year} bythe Email Automation Created by Odunsi Oluwabukola(LappiConnect)™️`
@@ -96,6 +97,18 @@ const sendBirthdayEmail = async (name, email) => {
 
 const checkBirthdaysAndSendEmails = async () => {
   const data = await readFiles();
+  const timezone = "Africa/Lagos"; // Specify your timezone
+  const now = moment.tz(timezone);
+  const today =  now.format('MM-DD')// format MM-DD
+  function getSimpleTimeAndDay() {
+
+  // Format time, day and year using toLocaleTimeString with options
+  const time = now.format('HH:mm:ss')
+  const day = now.format('dddd')
+  const year = now.year()
+
+  return { time, day, year };
+}
   const { time, day, year } = getSimpleTimeAndDay();
   console.log(`Current time: ${time}`);
   console.log(`Today is: ${day}`);
@@ -145,7 +158,7 @@ cron.schedule(
 )
 
 cron.schedule(
-  "0 9 * * *", async () => {
+  "30 9 * * *", async () => {
     const now = moment().tz("Africa/Lagos"); 
     console.log(` [CRON] Email Schedule started to run at ${now.format('YYYY-MM-DD HH:mm:ss')}`)
     await checkBirthdaysAndSendEmails();
