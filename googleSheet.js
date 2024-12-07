@@ -69,7 +69,7 @@ export const readFiles = async () => {
     const normalizedData = filteredData.map((row) => {
       row[2] = normalizeDate(row[2]); // Assuming birthday is in 3rd column
       // console.log("this is ", row);
-      // console.log(row[2], row[0])
+      // console.log(row[2], row[0]);
       return row;
     });
 

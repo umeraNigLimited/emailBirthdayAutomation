@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // true for port 465, false for other ports
   auth: {
-    user: 'communications@umera.ng',
+    user: process.env.USER,
     pass: process.env.PASS,
   },
 });
@@ -48,7 +48,7 @@ app.use("/", (req,res)=> {
 
 const sendBirthdayEmail = async (name, email) => {
   const mailOptions = {
-    from: 'communications@umera.ng',
+    from: process.env.USER,
     to: email,
     subject: `Happy Birthday, ${name}!`,
     html: `
@@ -86,9 +86,9 @@ function getSimpleTimeAndDay() {
   return { time, day, year };
 }
     const { time, day, year } = getSimpleTimeAndDay();
-    let message = `Hello Olamide😇, 
-    The Birthday Wish was sent to ${name} at ${time} on ${day}, ${year} bythe Email Automation Created by Odunsi Oluwabukola(LappiConnect)™️`
-    sendWhatsAppNotification(message)
+    // let message = `Hello Olamide😇, 
+    // The Birthday Wish was sent to ${name} at ${time} on ${day}, ${year} bythe Email Automation Created by Odunsi Oluwabukola(LappiConnect)™️`
+    // sendWhatsAppNotification(message)
     console.log(`Birthday email sent to: ${email}`);
   } catch (err) {
     console.error("Error sending email: ", err);
@@ -158,7 +158,7 @@ cron.schedule(
 )
 
 cron.schedule(
-  "30 9 * * *", async () => {
+  "0 9 * * *", async () => {
     const now = moment().tz("Africa/Lagos"); 
     console.log(` [CRON] Email Schedule started to run at ${now.format('YYYY-MM-DD HH:mm:ss')}`)
     await checkBirthdaysAndSendEmails();
@@ -169,7 +169,7 @@ cron.schedule(
 // const message = `Hello Olamide 😇, The Birthday Wish was sent at ${time} on ${day}, ${year} by the Email Automation Created by Odunsi Oluwabukola`
 
 // sendWhatsAppNotification(message)
-// checkBirthdaysAndSendEmails()
+checkBirthdaysAndSendEmails()
 
 
 
