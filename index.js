@@ -169,7 +169,7 @@ cron.schedule(
 // const message = `Hello Olamide 😇, The Birthday Wish was sent at ${time} on ${day}, ${year} by the Email Automation Created by Odunsi Oluwabukola`
 
 // sendWhatsAppNotification(message)
-checkBirthdaysAndSendEmails()
+// checkBirthdaysAndSendEmails()
 
 
 
