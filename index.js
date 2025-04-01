@@ -82,8 +82,8 @@ const sendBirthdayEmail = async (name, email) => {
     `,
     attachments: [
       {
-        filename: "HBD.png",
-        path: "./images/HBD.png",
+        filename: "HBD-umera.png",
+        path: "./images/HBD-umera.png",
         cid: "unique@umera.ng",
       },
     ],
