@@ -1,6 +1,6 @@
-import express from "express";
+import express, { text } from "express";
 import nodemailer from "nodemailer";
-import cron from "node-cron"
+import cron from "node-cron";
 import "dotenv/config";
 import { readFiles, updateSheet } from "./googleSheet.js";
 import moment from "moment-timezone";
@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false, // true for port 465, false for other ports
   auth: {
-    user: process.env.USER,
+    user: "communications@umera.ng" || process.env.USER,
     pass: process.env.PASS,
   },
 });
@@ -25,30 +25,48 @@ const transporter = nodemailer.createTransport({
 // console.log(process.env.USER)
 // console.log(process.env.PASS)
 
-app.use("/keepAppAlive", (req,res)=> {
-  console.log("Keeping Server Alive")
-  res.send('App is Alive')
-})
+app.use("/keepAppAlive", (req, res) => {
+  console.log("Keeping Server Alive");
+  res.send("App is Alive");
+});
 
-app.use("/getSMSRes", (req,res)=> {
-  console.log("Keeping Server Alive")
-  res.send(`Thank You`)
-  console.log(req.body)
-})
+app.use("/getSMSRes", (req, res) => {
+  console.log("Keeping Server Alive");
+  res.send(`Thank You`);
+  console.log(req.body);
+});
 
-app.use("/", (req,res)=> {
-  console.log("Keeping Server Alive")
+app.use("/", (req, res) => {
+  console.log("Keeping Server Alive");
   res.send(`This is an App for Email Automation Using Googlesheet and Nodemailer by Odunsi Oluwabukola.
     All the thing wey i write for top na perspe, Make i no lie , Coding Hard die!
-    `)
-})
+    `);
+});
 
+const sendEmiailNotificationToSelf = async (email, name) => {
+  try {
+    const mailInfo = {
+      from: "communications@umera.ng" || process.env.USER,
+      to: "communications@umera.ng" || process.env.USER,
+      subject: "Birthday Wish Notification",
+      text: `A Birthday Wish was sent to ${name}, Email : ${email}`,
+    };
 
-
+    await transporter.sendMail(mailInfo, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+      } else {
+        console.log("email Notification sent:", info.response);
+      }
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 const sendBirthdayEmail = async (name, email) => {
   const mailOptions = {
-    from: process.env.USER,
+    from: "communications@umera.ng" || process.env.USER,
     to: email,
     subject: `Happy Birthday, ${name}!`,
     html: `
@@ -74,41 +92,41 @@ const sendBirthdayEmail = async (name, email) => {
   try {
     await transporter.sendMail(mailOptions);
     const timezone = "Africa/Lagos"; // Specify your timezone
-const now = moment.tz(timezone);
-const today =  now.format('MM-DD')// format MM-DD
-function getSimpleTimeAndDay() {
+    const now = moment.tz(timezone);
+    const today = now.format("MM-DD"); // format MM-DD
+    function getSimpleTimeAndDay() {
+      // Format time, day and year using toLocaleTimeString with options
+      const time = now.format("HH:mm:ss");
+      const day = now.format("dddd");
+      const year = now.year();
 
-  // Format time, day and year using toLocaleTimeString with options
-  const time = now.format('HH:mm:ss')
-  const day = now.format('dddd')
-  const year = now.year()
-
-  return { time, day, year };
-}
+      return { time, day, year };
+    }
     const { time, day, year } = getSimpleTimeAndDay();
-    // let message = `Hello Olamide😇, 
+    // let message = `Hello Olamide😇,
     // The Birthday Wish was sent to ${name} at ${time} on ${day}, ${year} bythe Email Automation Created by Odunsi Oluwabukola(LappiConnect)™️`
     // sendWhatsAppNotification(message)
     console.log(`Birthday email sent to: ${email}`);
   } catch (err) {
     console.error("Error sending email: ", err);
   }
+
+  return "The Send Email Function worked correctly";
 };
 
 const checkBirthdaysAndSendEmails = async () => {
   const data = await readFiles();
   const timezone = "Africa/Lagos"; // Specify your timezone
   const now = moment.tz(timezone);
-  const today =  now.format('MM-DD')// format MM-DD
+  const today = now.format("MM-DD"); // format MM-DD
   function getSimpleTimeAndDay() {
+    // Format time, day and year using toLocaleTimeString with options
+    const time = now.format("HH:mm:ss");
+    const day = now.format("dddd");
+    const year = now.year();
 
-  // Format time, day and year using toLocaleTimeString with options
-  const time = now.format('HH:mm:ss')
-  const day = now.format('dddd')
-  const year = now.year()
-
-  return { time, day, year };
-}
+    return { time, day, year };
+  }
   const { time, day, year } = getSimpleTimeAndDay();
   console.log(`Current time: ${time}`);
   console.log(`Today is: ${day}`);
@@ -128,7 +146,12 @@ const checkBirthdaysAndSendEmails = async () => {
     try {
       if (birthday.slice(5, 10) === today && !sent) {
         try {
-          await sendBirthdayEmail(name, email);
+          await sendBirthdayEmail(name, email)
+            .then((res) => {
+              sendEmiailNotificationToSelf(email, name);
+              console.log(res);
+            })
+            .catch((err) => console.error(err));
           // Update the sheet to mark the email as sent
           await updateSheet(
             row[0],
@@ -147,31 +170,37 @@ const checkBirthdaysAndSendEmails = async () => {
   }
 };
 
+cron.schedule(
+  "*/5 * * * *",
+  async () => {
+    console.log("Keeping App Live Every 5 min");
+    await axios
+      .get("https://emailbirthdayautomation.onrender.com/keepAppAlive")
+      .then((res) => console.log("This ran after 5 mins"))
+      .catch((err) => console.log(err));
+  },
+  { scheduled: true }
+);
 
 cron.schedule(
-  "*/5 * * * *", async () => {
-    console.log('Keeping App Live Every 5 min')
-      await axios.get('https://emailbirthdayautomation.onrender.com/keepAppAlive')
-      .then((res) => console.log('This ran after 5 mins'))
-      .catch(err => console.log(err))
-  }, { scheduled: true}
-)
-
-cron.schedule(
-  "0 9 * * *", async () => {
-    const now = moment().tz("Africa/Lagos"); 
-    console.log(` [CRON] Email Schedule started to run at ${now.format('YYYY-MM-DD HH:mm:ss')}`)
+  "0 9 * * *",
+  async () => {
+    const now = moment().tz("Africa/Lagos");
+    console.log(
+      ` [CRON] Email Schedule started to run at ${now.format(
+        "YYYY-MM-DD HH:mm:ss"
+      )}`
+    );
     await checkBirthdaysAndSendEmails();
-  }, { scheduled: true , timezone: "Africa/Lagos"}
-)
+  },
+  { scheduled: true, timezone: "Africa/Lagos" }
+);
 
 // const { time, day, year } = getSimpleTimeAndDay();
 // const message = `Hello Olamide 😇, The Birthday Wish was sent at ${time} on ${day}, ${year} by the Email Automation Created by Odunsi Oluwabukola`
 
 // sendWhatsAppNotification(message)
-// checkBirthdaysAndSendEmails()
-
-
+checkBirthdaysAndSendEmails();
 
 app.listen(port, () => {
   console.log("App is listening on", port);
